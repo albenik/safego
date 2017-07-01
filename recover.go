@@ -25,7 +25,7 @@ func Gol(label string, fn func(), log logrus.FieldLogger) {
 			if r := recover(); r == nil {
 				log.Debugf("go(%s): end", label)
 			} else {
-				log.Errorf("go(%s) error: %v\n%v", label, r, debug.Stack())
+				log.Errorf("go(%s) error: %v\n%v", label, r, string(debug.Stack()))
 			}
 		}()
 		fn()
