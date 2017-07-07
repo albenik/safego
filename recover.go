@@ -19,7 +19,7 @@ func Go(fn func(), rfn RecoverFunc) {
 	}()
 }
 
-func Gol(label string, fn func(), log logrus.FieldLogger) {
+func Gol(label string, fn func(log logrus.FieldLogger), log logrus.FieldLogger) {
 	go func() {
 		log.Debugf("go(%s) begin", label)
 		defer func() {
@@ -29,11 +29,11 @@ func Gol(label string, fn func(), log logrus.FieldLogger) {
 				log.Errorf("go(%s) panic %v\n%v", label, r, string(debug.Stack()))
 			}
 		}()
-		fn()
+		fn(log)
 	}()
 }
 
-func Goe(label string, fn func() error, log logrus.FieldLogger) {
+func Goe(label string, fn func(log logrus.FieldLogger) error, log logrus.FieldLogger) {
 	go func() {
 		log.Debugf("go(%s) begin", label)
 		defer func() {
@@ -43,7 +43,7 @@ func Goe(label string, fn func() error, log logrus.FieldLogger) {
 				log.Errorf("go(%s) panic %v\n%v", label, r, string(debug.Stack()))
 			}
 		}()
-		if err := fn(); err != nil {
+		if err := fn(log); err != nil {
 			log.WithError(err).Errorf("go(%s) func error", label)
 		} else {
 			log.Debugf("go(%s) func success", label)
